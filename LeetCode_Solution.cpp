@@ -1,58 +1,60 @@
-#include <iostream>
-#include <vector>
-class Solution
-{
+#include<iostream>
+#include<vector>
+#include <map> 
+using namespace std;
+class Solution {
 public:
-  bool isPalindrome(int x)
-  {
-    if (x < 0)
-      return false;
-    std::vector<int> nums;
-    while (x)
-    {
-      int a = x % 10;
-      nums.push_back(a);
-      x = x / 10;
-    }
-    for (int i = 0; i < nums.size(); i++)
-    {
-      if (nums.size() / (i + 1) < 2 && nums.size() > 2)
-        return true;
-      if (nums[i] != nums[nums.size() - 1 - i])
-        return false;
-    }
-    return true;
-  }
+	int romanToInt(string s) {
+		map<char, int> map = { {'I',1},{'V',5},{'X',10},{'L',50},{'C',100},{'D',500},{'M',1000} };
+		size_t len = s.length();
+		int sum = 0;
+		int tmp = 0;
+		for (int i = 1; i < len + 1; i++) //ѭ����1��ʼ
+		{
+			tmp = map.find(s[i - 1])->second;//����һλ����ֵ
+			if (i == len) //�ж�һ���Ƿ�Խ�磬�Ǿ�ֱ�Ӽ���ĩλ������ѭ��
+			{
+				sum = sum + map.find(s[i - 1])->second;
+				return sum;
+			}
+			if (tmp - map.find(s[i])->second >= 0)//���ǰһλ�����ڴ��ڻ���ڣ�ֱ�Ӽ���ǰλ
+				sum += tmp;
+			else
+			{
+				sum += map.find(s[i])->second - tmp;//���ǰһλ������С����������ټ��ܣ���һλ��
+				i++;
+			}
+
+		}
+		return sum;
+	}
 };
 
 class SolutionSmart {
 public:
-    bool isPalindrome(int x) {
-        // 特殊情况：
-        // 如上所述，当 x < 0 时，x 不是回文数。
-        // 同样地，如果数字的最后一位是 0，为了使该数字为回文，
-        // 则其第一位数字也应该是 0
-        // 只有 0 满足这一属性
-        if (x < 0 || (x % 10 == 0 && x != 0)) {
-            return false;
-        }
+	int romanToInt(string s) {
+		string roman = "IVXLCDM";
+		int intnum[] = { 1, 5, 10, 50, 100, 500, 1000 };
+		int result = 0, temp1;
+		string::iterator its = s.begin();
 
-        int revertedNumber = 0;
-        while (x > revertedNumber) {
-            revertedNumber = revertedNumber * 10 + x % 10;
-            x /= 10;
-        }
-
-        // 当数字长度为奇数时，我们可以通过 revertedNumber/10 去除处于中位的数字。
-        // 例如，当输入为 12321 时，在 while 循环的末尾我们可以得到 x = 12，revertedNumber = 123，
-        // 由于处于中位的数字不影响回文（它总是与自己相等），所以我们可以简单地将其去除。
-        return x == revertedNumber || x == revertedNumber / 10;
-    }
+		while (next(its) != s.end()) {
+			temp1 = intnum[roman.find(*its)];
+			if (temp1 < intnum[roman.find(*next(its))])
+				result -= temp1;
+			else
+				result += temp1;
+			its++;
+		}
+		result += intnum[roman.find(*its)];
+		return result;
+	}
 };
 
-int main()
-{
-  Solution s;
-  std::cout << s.isPalindrome(10022201) << std::endl;
-  return 0;
+int main() {
+	SolutionSmart s;
+	int c = s.romanToInt("MCMXCIV");
+	int d = s.romanToInt("IV");
+	int e = s.romanToInt("IX");
+	return 0;
 }
