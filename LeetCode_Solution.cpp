@@ -1,60 +1,55 @@
 #include<iostream>
 #include<vector>
 #include <map> 
+#include <string>
 using namespace std;
 class Solution {
 public:
-	int romanToInt(string s) {
-		map<char, int> map = { {'I',1},{'V',5},{'X',10},{'L',50},{'C',100},{'D',500},{'M',1000} };
-		size_t len = s.length();
-		int sum = 0;
-		int tmp = 0;
-		for (int i = 1; i < len + 1; i++) //循环从1开始
+	string longestCommonPrefix(vector<string>& strs) {
+		map<int, string> map;
+	
+		int minlen = 201;
+		string minstr;
+		for (auto str : strs)
 		{
-			tmp = map.find(s[i - 1])->second;//找上一位数的值
-			if (i == len) //判断一下是否越界，是就直接加上末位，跳出循环
+			if (minlen > str.length())
 			{
-				sum = sum + map.find(s[i - 1])->second;
-				return sum;
+				minlen = str.length();
+				minstr = str;
 			}
-			if (tmp - map.find(s[i])->second >= 0)//如果前一位比现在大于或等于，直接加上前位
-				sum += tmp;
-			else
-			{
-				sum += map.find(s[i])->second - tmp;//如果前一位比现在小，则相减后再加总，跳一位数
-				i++;
-			}
-
 		}
-		return sum;
+		map.insert(pair<int, string >( minstr.length(), minstr));
+		int arrylen = strs.size();
+		int len = minlen;
+		for (auto str : strs)
+		{
+			string tmp;
+			for (int i = 0; i < minlen; i++)
+			{
+				if ((str[i] == minstr[i]) && (str != minstr))
+				{
+					tmp = tmp + str[i];
+				}
+			}
+			map.insert(pair<int, string >( tmp.length()-1,tmp));
+			if (len > tmp.length() - 1)
+				len = tmp.length() - 1;
+		}
+		string ret = map.find(len)->second;
+		if (ret.length() == minlen && arrylen == 1)
+			return minstr;
+		else if(ret.length() == minlen)
+			return "";
+		else
+		return map.find(len)->second;
 	}
 };
 
-class SolutionSmart {
-public:
-	int romanToInt(string s) {
-		string roman = "IVXLCDM";
-		int intnum[] = { 1, 5, 10, 50, 100, 500, 1000 };
-		int result = 0, temp1;
-		string::iterator its = s.begin();
-
-		while (next(its) != s.end()) {
-			temp1 = intnum[roman.find(*its)];
-			if (temp1 < intnum[roman.find(*next(its))])
-				result -= temp1;
-			else
-				result += temp1;
-			its++;
-		}
-		result += intnum[roman.find(*its)];
-		return result;
-	}
-};
 
 int main() {
-	SolutionSmart s;
-	int c = s.romanToInt("MCMXCIV");
-	int d = s.romanToInt("IV");
-	int e = s.romanToInt("IX");
+	Solution s;
+	vector<string> strs = { "ab","a" };
+
+	cout << s.longestCommonPrefix(strs);
 	return 0;
 }
